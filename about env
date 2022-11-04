@@ -1,0 +1,64 @@
+On development machines, environment variables are often stored in the special .env file. The godotenv library loads environment variables from the .env file.
+
+$ go get github.com/joho/godotenv
+We install the library.
+
+.env
+EDITOR=emacs
+NAME=Peter
+We have two variables.
+
+dotenv_load.go
+package main
+
+import (
+    "fmt"
+    "log"
+    "os"
+
+    "github.com/joho/godotenv"
+)
+
+func init() {
+
+    err := godotenv.Load(".env")
+
+    if err != nil {
+        log.Fatal("Error loading .env file")
+    }
+}
+
+func main() {
+
+    fmt.Printf("%s uses %s\n", os.Getenv("NAME"), os.Getenv("EDITOR"))
+}
+With the Load function, we load the variables and later retrieve them with os.Getenv.
+====================================================================================================================================================================
+If we do not want to mix up existing environment variables with those from the .env file, we can use the Read function which returns a map of environment variables.
+
+dotenv_read.go
+package main
+
+import (
+    "fmt"
+    "log"
+
+    "github.com/joho/godotenv"
+)
+
+func main() {
+
+    var envs map[string]string
+    envs, err := godotenv.Read(".env")
+
+    if err != nil {
+        log.Fatal("Error loading .env file")
+    }
+
+    name := envs["NAME"]
+    editor := envs["EDITOR"]
+
+    fmt.Printf("%s uses %s\n", name, editor)
+}
+In the code example, we read the environment variables from the .env file into a map.
+====================================================================================================================================================================
